@@ -1,0 +1,85 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <AssemblyName>KK_ChaAlphaMask</AssemblyName>
+    <RootNamespace>KK_ChaAlphaMask</RootNamespace>
+    <TargetFramework>net35</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <EnableDefaultItems>false</EnableDefaultItems>
+    <Version>1.0.0</Version>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <!-- 游戏目录，可通过 -p:GameDir=... 覆盖 -->
+    <GameDir Condition="'$(GameDir)' == ''">E:\game\GDAkk\Koikatu</GameDir>
+    <ManagedDir>$(GameDir)\Koikatu_Data\Managed</ManagedDir>
+    <CoreDir>$(GameDir)\BepInEx\core</CoreDir>
+    <PluginsDir>$(GameDir)\BepInEx\plugins</PluginsDir>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="..\src\*.cs" />
+    <EmbeddedResource Include="..\src\KK_ChaAlphaMask.resources.alphamaskmultiply">
+      <LogicalName>KK_ChaAlphaMask.resources.alphamaskmultiply</LogicalName>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="BepInEx">
+      <HintPath>$(CoreDir)\BepInEx.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="0Harmony">
+      <HintPath>$(CoreDir)\0Harmony.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="KKAPI">
+      <HintPath>$(PluginsDir)\KKAPI.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="KK_OverlayMods">
+      <HintPath>$(PluginsDir)\KK_OverlayMods.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="KK_MaterialEditor">
+      <HintPath>$(PluginsDir)\KK_Plugins\KK_MaterialEditor.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="KK_ForceHighPoly">
+      <HintPath>$(PluginsDir)\KK_Plugins\KK_ForceHighPoly.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="ExtensibleSaveFormat">
+      <HintPath>$(PluginsDir)\KK_BepisPlugins\ExtensibleSaveFormat.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="Sideloader">
+      <HintPath>$(PluginsDir)\KK_BepisPlugins\Sideloader.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="Assembly-CSharp">
+      <HintPath>$(ManagedDir)\Assembly-CSharp.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="Assembly-CSharp-firstpass">
+      <HintPath>$(ManagedDir)\Assembly-CSharp-firstpass.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine">
+      <HintPath>$(ManagedDir)\UnityEngine.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine.UI">
+      <HintPath>$(ManagedDir)\UnityEngine.UI.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="TextMeshPro-1.0.55.56.0b12">
+      <HintPath>$(ManagedDir)\TextMeshPro-1.0.55.56.0b12.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3" PrivateAssets="all" />
+  </ItemGroup>
+
+</Project>

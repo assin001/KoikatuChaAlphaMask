@@ -1,0 +1,12 @@
+# 构建产物
+bin/
+obj/
+.vs/
+*.user
+*.suo
+
+# 原始反编译二进制（仅本地参考）
+/KK_ChaAlphaMask.dll
+
+# 本地示例 zipmod / 素材，不入库
+/【As-sin】*/
