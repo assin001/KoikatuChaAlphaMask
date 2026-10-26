@@ -11,6 +11,14 @@
 - 支持 zipmod 通过 `manifest.xml` 提供遮罩贴图：可直接用 PNG，也可从 AssetBundle 中取资源
 - 与 Material Editor / Clothes Overlay（KCOX）联动，遮罩变化会跟随材质与衣服覆盖层更新
 
+## 使用教程
+
+**独立遮罩完整图文教程（绘制遮罩 → 放进 unity3d → 填 manifest → 游戏内验证）：**
+
+https://github.com/assin001/KoikatuChaAlphaMask/blob/main/docs/独立遮罩使用方法.md
+
+本地文件：[docs/独立遮罩使用方法.md](docs/独立遮罩使用方法.md)
+
 ## 目录结构
 
 ```
@@ -25,6 +33,8 @@ src/                                       共享源码
   KK_ChaAlphaMask.resources.alphamaskmultiply   内嵌遮罩相乘 AssetBundle
 KK_ChaAlphaMask/KK_ChaAlphaMask.csproj      Koikatu 版（net35）
 KKS_ChaAlphaMask/KKS_ChaAlphaMask.csproj    KoikatuSunshine 版（net46）
+docs/独立遮罩使用方法.md                    独立遮罩图文教程
+docs/images/                               教程配图
 ```
 
 两个工程都通过 `..\src\*.cs` 共享同一份源码，只是引用的游戏程序集与目标框架不同，改代码只需改 `src/`。
