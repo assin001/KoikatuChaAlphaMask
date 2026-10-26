@@ -1,4 +1,4 @@
-# ChaAlphaMask（Koikatu / KoikatuSunshine）
+<h1 align="center">ChaAlphaMask</h1>
 
 给衣服加「身体遮罩 / Alpha 遮罩」的插件，衣服可以通过 zipmod 的 `manifest.xml` 指定自己的遮罩贴图，用于让同一件衣服的不同部位（或不同状态）显示不同的透明区域。
 
@@ -14,9 +14,6 @@
 ## 使用教程
 
 **独立遮罩完整图文教程（绘制遮罩 → 放进 unity3d → 填 manifest → 游戏内验证）：**
-
-https://github.com/assin001/KoikatuChaAlphaMask/blob/main/docs/独立遮罩使用方法.md
-
 本地文件：[docs/独立遮罩使用方法.md](docs/独立遮罩使用方法.md)
 
 ## 目录结构
