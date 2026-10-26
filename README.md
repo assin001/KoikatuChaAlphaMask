@@ -2,7 +2,7 @@
 
 给衣服加「身体遮罩 / Alpha 遮罩」的插件，衣服可以通过 zipmod 的 `manifest.xml` 指定自己的遮罩贴图，用于让同一件衣服的不同部位（或不同状态）显示不同的透明区域。
 
-本仓库是反编译 + 双版本适配后的源码版本，一套源码同时构建 Koikatu 与 KoikatuSunshine 两个插件。
+本仓库是反编译适配后的源码版本，一套源码同时构建 Koikatu 与 KoikatuSunshine 两个插件。
 
 ## 功能
 
@@ -14,7 +14,8 @@
 ## 使用教程
 
 **独立遮罩完整图文教程（绘制遮罩 → 放进 unity3d → 填 manifest → 游戏内验证）：**
-本地文件：[docs/独立遮罩使用方法.md](docs/独立遮罩使用方法.md)
+
+**本地文件：[docs/独立遮罩使用方法.md](docs/独立遮罩使用方法.md)**
 
 ## 目录结构
 
@@ -34,31 +35,7 @@ docs/独立遮罩使用方法.md                    独立遮罩图文教程
 docs/images/                               教程配图
 ```
 
-两个工程都通过 `..\src\*.cs` 共享同一份源码，只是引用的游戏程序集与目标框架不同，改代码只需改 `src/`。
-
-## 编译
-
-需要 .NET SDK（本项目使用 SDK 8 验证过）。游戏目录默认值写在 csproj 里，可通过 `GameDir` 覆盖：
-
-```bash
-# Koikatu
-dotnet build KK_ChaAlphaMask/KK_ChaAlphaMask.csproj -c Release
-
-# KoikatuSunshine
-dotnet build KKS_ChaAlphaMask/KKS_ChaAlphaMask.csproj -c Release
-
-# 游戏装在别处时
-dotnet build KKS_ChaAlphaMask/KKS_ChaAlphaMask.csproj -c Release -p:GameDir="D:\KoikatuSunshine"
-```
-
-输出：
-
-| 工程 | 产物 | 放置位置 |
-|---|---|---|
-| `KK_ChaAlphaMask` | `KK_ChaAlphaMask.dll` | `Koikatu\BepInEx\plugins\` |
-| `KKS_ChaAlphaMask` | `KKS_ChaAlphaMask.dll` | `KoikatuSunshine\BepInEx\plugins\` |
-
-两个 DLL 不能互换：KK 版是 net35 + Unity 5.6 程序集，KKS 版是 net46 + Unity 2019 程序集。
+两个工程都通过 `..\src\*.cs` 共享同一份源码，只是引用的游戏程序集与目标框架不同，改代码只需改 `src/`
 
 ## 依赖
 
