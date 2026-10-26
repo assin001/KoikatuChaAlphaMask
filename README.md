@@ -102,6 +102,8 @@ dotnet build KKS_ChaAlphaMask/KKS_ChaAlphaMask.csproj -c Release -p:GameDir="D:\
 
 `abPath` 与 `pngBodyMaskPath` 二选一即可，都不是必需项：不配就只是没有遮罩贴图。
 
+完整的图文流程（绘制遮罩 → 放进 unity3d → 填 manifest → 游戏内验证）见 [独立遮罩使用方法](docs/独立遮罩使用方法.md)。
+
 ## 与 KoikatuSunshine 的差异
 
 - 插件 GUID 保持 `nakay.kk.ChaAlphaMask` 不变，这样 KK 卡片里已存的遮罩设置能在 KKS 直接读取
