@@ -19,7 +19,7 @@ using Object = UnityEngine.Object;
 
 namespace KK_ChaAlphaMask;
 
-[BepInPlugin("nakay.kk.ChaAlphaMask", "Character Alpha Mask", "1.1.0")]
+[BepInPlugin("nakay.kk.ChaAlphaMask", "Character Alpha Mask", "1.1.1")]
 [BepInDependency("marco.kkapi", "1.17")]
 [BepInDependency("com.deathweasel.bepinex.materialeditor")]
 [BepInDependency("KCOX")]
@@ -29,7 +29,7 @@ public class ChaAlphaMask : BaseUnityPlugin
 
 	public const string PluginName = "Character Alpha Mask";
 
-	public const string PluginVersion = "1.1.0";
+	public const string PluginVersion = "1.1.1";
 
 	internal static new ManualLogSource Logger;
 
@@ -101,7 +101,12 @@ public class ChaAlphaMask : BaseUnityPlugin
 		ToggleWindowKey = base.Config.Bind<KeyboardShortcut>("Maker", "Toggle Mask Window", new KeyboardShortcut(KeyCode.F5), "捏人界面内打开 / 关闭「角色Alpha遮罩」窗口的快捷键（默认 F5）");
 		WindowPosX = base.Config.Bind<float>("Maker", "Window X", 560f, "窗口初始 X 坐标");
 		WindowPosY = base.Config.Bind<float>("Maker", "Window Y", 100f, "窗口初始 Y 坐标");
-		ExportPath = base.Config.Bind<string>("General", "Export Path", Path.Combine(Path.Combine(BepInEx.Paths.GameRootPath, "UserData"), "AlphaMask"), "遮罩导出的默认目录");
+		ExportPath = base.Config.Bind<string>("General", "Export Path", Path.Combine(Path.Combine(BepInEx.Paths.GameRootPath, "UserData"), "Overlays"), "遮罩导出目录，同时也是导入对话框的起始目录（默认游戏根目录下的 UserData\\Overlays）");
+		// 旧版默认目录是 UserData\AlphaMask，这里自动迁移到 UserData\Overlays
+		if (ExportPath.Value != null && ExportPath.Value.Replace('/', '\\').EndsWith("UserData\\AlphaMask", StringComparison.OrdinalIgnoreCase))
+		{
+			ExportPath.Value = Path.Combine(Path.Combine(BepInEx.Paths.GameRootPath, "UserData"), "Overlays");
+		}
 		ImportPlusPackMasks = base.Config.Bind<bool>("General", "Import PlusPack Mask Data", true, "读取 Madevil PlusPack - ChaAlphaMask（madevil.kk.PPCAM）存在卡片里的遮罩数据");
 	}
 

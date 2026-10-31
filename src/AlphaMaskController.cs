@@ -194,20 +194,13 @@ public class AlphaMaskController : CharaCustomFunctionController
 		}
 		try
 		{
+			// 遮罩用 RGB 通道表示要遮蔽的部位，原图的 alpha 不管（很多遮罩是整张不透明的黑底 + 纯色），
+			// 缩略图里把亮度当 alpha，黑底自然变透明，露出窗口的深色行背景
 			Color32[] pixels = customMaskTexture.GetPixels32();
 			for (int i = 0; i < pixels.Length; i++)
 			{
 				Color32 color = pixels[i];
-				int num = Math.Max(color.r, Math.Max(color.g, color.b));
-				byte a = (byte)Math.Max(num, color.a);
-				if (num == 0)
-				{
-					color = new Color32(byte.MaxValue, byte.MaxValue, byte.MaxValue, a);
-				}
-				else
-				{
-					color.a = a;
-				}
+				color.a = (byte)Math.Max(color.r, Math.Max(color.g, color.b));
 				pixels[i] = color;
 			}
 			Texture2D texture2D = new Texture2D(customMaskTexture.width, customMaskTexture.height, TextureFormat.ARGB32, false);

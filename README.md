@@ -39,7 +39,7 @@
 |---|---|---|---|
 | Maker | `Toggle Mask Window` | `F5` | 开关窗口的快捷键 |
 | Maker | `Window X` / `Window Y` | `560` / `100` | 窗口位置，拖动后会自动记住 |
-| General | `Export Path` | `UserData\AlphaMask` | 导出遮罩的目录，也是导入对话框的起始目录 |
+| General | `Export Path` | `UserData\Overlays` | 导出遮罩的目录，也是导入对话框的起始目录 |
 | General | `Import PlusPack Mask Data` | `true` | 读取 Madevil PlusPack 存在卡片里的遮罩数据 |
 
 ## 使用教程
@@ -148,6 +148,11 @@ dotnet build KKS_ChaAlphaMask\KKS_ChaAlphaMask.csproj -c Release -p:GameDir="E:\
 - `CvsClothes.UpdateSelectClothes`、`ChaControl.SetClothesState` 等 API 签名在 KKS 中多了参数，Harmony 按参数名绑定，补丁逻辑无需改动
 
 ## 更新日志
+
+### 1.1.1
+
+- 修复窗口里的遮罩缩略图把整张不透明黑底画成白底的问题（只用 RGB 亮度算可见度，黑底正确透明）
+- 导出目录默认改为游戏根目录下的 `UserData\Overlays`，旧配置里的 `UserData\AlphaMask` 会自动迁移
 
 ### 1.1
 
