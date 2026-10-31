@@ -6,6 +6,7 @@ using ExtensibleSaveFormat;
 using IllusionUtility.GetUtility;
 using KKAPI;
 using KKAPI.Chara;
+using KKAPI.Maker;
 using KK_Plugins.MaterialEditor;
 using KoiClothesOverlayX;
 using MessagePack;
@@ -32,7 +33,27 @@ public class AlphaMaskController : CharaCustomFunctionController
 		public bool isBotMask;
 	}
 
+	[MessagePackObject(false)]
+	public class CustomMask
+	{
+		[Key(0)]
+		public int coordinateType;
+
+		[Key(1)]
+		public int clothesKind;
+
+		[Key(2)]
+		public byte[] png;
+	}
+
 	internal List<KindPair> kindPairBodyMask = new List<KindPair>();
+
+	/// <summary>存在角色卡（或服装卡）里的遮罩 PNG，按坐标 × 服装种类保存。</summary>
+	internal List<CustomMask> customMasks = new List<CustomMask>();
+
+	private readonly Dictionary<int, Texture2D> customMaskTex = new Dictionary<int, Texture2D>();
+
+	private readonly Dictionary<int, Texture2D> customMaskPreview = new Dictionary<int, Texture2D>();
 
 	private readonly Dictionary<int, MaskProperty> bodyMaskProperty = new Dictionary<int, MaskProperty>(8)
 	{
@@ -62,9 +83,187 @@ public class AlphaMaskController : CharaCustomFunctionController
 
 	private MaterialEditorCharaController MECtrl;
 
-	internal bool MaskTexPathExists => bodyMaskProperty.Any((KeyValuePair<int, MaskProperty> x) => x.Value != null);
+	internal bool MaskTexPathExists
+	{
+		get
+		{
+			foreach (KeyValuePair<int, MaskProperty> item in bodyMaskProperty)
+			{
+				if (item.Value != null)
+				{
+					return true;
+				}
+			}
+			return HasAnyCustomMask;
+		}
+	}
 
 	public Texture TexBodyMask => texBodyMask;
+
+	private int CurrentCoordinateType => ((ChaInfo)((CharaCustomFunctionController)this).ChaControl).fileStatus.coordinateType;
+
+	internal bool HasAnyCustomMask
+	{
+		get
+		{
+			int coordinateType = CurrentCoordinateType;
+			for (int i = 0; i < customMasks.Count; i++)
+			{
+				CustomMask customMask = customMasks[i];
+				if (customMask != null && customMask.coordinateType == coordinateType && customMask.png != null)
+				{
+					return true;
+				}
+			}
+			return false;
+		}
+	}
+
+	internal byte[] GetCustomMaskPng(int clothesKind)
+	{
+		int coordinateType = CurrentCoordinateType;
+		for (int i = 0; i < customMasks.Count; i++)
+		{
+			CustomMask customMask = customMasks[i];
+			if (customMask != null && customMask.coordinateType == coordinateType && customMask.clothesKind == clothesKind)
+			{
+				return customMask.png;
+			}
+		}
+		return null;
+	}
+
+	internal void SetCustomMask(int clothesKind, byte[] png)
+	{
+		int coordinateType = CurrentCoordinateType;
+		customMasks.RemoveAll((CustomMask x) => x.coordinateType == coordinateType && x.clothesKind == clothesKind);
+		if (png != null && png.Length != 0)
+		{
+			customMasks.Add(new CustomMask
+			{
+				coordinateType = coordinateType,
+				clothesKind = clothesKind,
+				png = png
+			});
+		}
+		InvalidateMaskTexture(clothesKind);
+		hasChangedBodyMaskProp = true;
+	}
+
+	internal Texture2D GetCustomMaskTexture(int clothesKind)
+	{
+		byte[] customMaskPng = GetCustomMaskPng(clothesKind);
+		if (customMaskPng == null)
+		{
+			return null;
+		}
+		if (customMaskTex.TryGetValue(clothesKind, out Texture2D value) && value != null)
+		{
+			return value;
+		}
+		try
+		{
+			value = KKAPI.Utilities.TextureUtils.LoadTexture(customMaskPng, TextureFormat.RGBA32, false);
+			value.wrapMode = TextureWrapMode.Clamp;
+			value.name = $"ChaAlphaMask_{clothesKind}";
+			customMaskTex[clothesKind] = value;
+			return value;
+		}
+		catch (Exception ex)
+		{
+			ChaAlphaMask.Logger.LogError((object)("Failed to create mask texture for clothes kind " + clothesKind + ": " + ex));
+			return null;
+		}
+	}
+
+	/// <summary>给窗口用的缩略图：把单通道遮罩转成肉眼可见的图片。</summary>
+	internal Texture2D GetCustomMaskPreview(int clothesKind)
+	{
+		if (GetCustomMaskPng(clothesKind) == null)
+		{
+			return null;
+		}
+		if (customMaskPreview.TryGetValue(clothesKind, out Texture2D value) && value != null)
+		{
+			return value;
+		}
+		Texture2D customMaskTexture = GetCustomMaskTexture(clothesKind);
+		if (customMaskTexture == null)
+		{
+			return null;
+		}
+		try
+		{
+			Color32[] pixels = customMaskTexture.GetPixels32();
+			for (int i = 0; i < pixels.Length; i++)
+			{
+				Color32 color = pixels[i];
+				int num = Math.Max(color.r, Math.Max(color.g, color.b));
+				byte a = (byte)Math.Max(num, color.a);
+				if (num == 0)
+				{
+					color = new Color32(byte.MaxValue, byte.MaxValue, byte.MaxValue, a);
+				}
+				else
+				{
+					color.a = a;
+				}
+				pixels[i] = color;
+			}
+			Texture2D texture2D = new Texture2D(customMaskTexture.width, customMaskTexture.height, TextureFormat.ARGB32, false);
+			texture2D.SetPixels32(pixels);
+			texture2D.Apply(false);
+			texture2D.wrapMode = TextureWrapMode.Clamp;
+			texture2D.name = $"ChaAlphaMask_preview_{clothesKind}";
+			customMaskPreview[clothesKind] = texture2D;
+			return texture2D;
+		}
+		catch (Exception ex)
+		{
+			ChaAlphaMask.Logger.LogWarning((object)("Failed to build mask preview: " + ex));
+			return null;
+		}
+	}
+
+	private void InvalidateMaskTexture(int clothesKind)
+	{
+		if (customMaskTex.TryGetValue(clothesKind, out Texture2D value))
+		{
+			customMaskTex.Remove(clothesKind);
+			if (value != null)
+			{
+				Object.Destroy(value);
+			}
+		}
+		if (customMaskPreview.TryGetValue(clothesKind, out Texture2D value2))
+		{
+			customMaskPreview.Remove(clothesKind);
+			if (value2 != null)
+			{
+				Object.Destroy(value2);
+			}
+		}
+	}
+
+	private void InvalidateAllMaskTextures()
+	{
+		foreach (Texture2D value in customMaskTex.Values)
+		{
+			if (value != null)
+			{
+				Object.Destroy(value);
+			}
+		}
+		customMaskTex.Clear();
+		foreach (Texture2D value2 in customMaskPreview.Values)
+		{
+			if (value2 != null)
+			{
+				Object.Destroy(value2);
+			}
+		}
+		customMaskPreview.Clear();
+	}
 
 	private bool IsHighPoly
 	{
@@ -248,6 +447,7 @@ public class AlphaMaskController : CharaCustomFunctionController
 			}
 			num++;
 		}
+		ApplyCustomMasks(component.material);
 		if (((ChaFile)((ChaInfo)((CharaCustomFunctionController)this).ChaControl).chaFile).status.clothesState[0] == 3)
 		{
 			maskBase = (Texture)(object)ChaAlphaMask.MaskTex55;
@@ -263,11 +463,52 @@ public class AlphaMaskController : CharaCustomFunctionController
 		return true;
 	}
 
+	/// <summary>把卡片里导入的遮罩覆盖到对应服装槽位上（优先级高于 zipmod manifest 里的遮罩）。</summary>
+	private void ApplyCustomMasks(Material mat)
+	{
+		for (int i = 0; i < 8; i++)
+		{
+			try
+			{
+				int clothesKind = i + 1;
+				bool flag = clothesKind < 7 || ((clothesKind == 7) ? (((ChaInfo)((CharaCustomFunctionController)this).ChaControl).fileStatus.shoesType == 0) : (((ChaInfo)((CharaCustomFunctionController)this).ChaControl).fileStatus.shoesType == 1));
+				if (!flag)
+				{
+					continue;
+				}
+				ChaFileClothes.PartsInfo partsInfo = ((CharaCustomFunctionController)this).ChaControl.nowCoordinate.clothes.parts[clothesKind];
+				if (partsInfo == null || partsInfo.id == 0)
+				{
+					continue;
+				}
+				Texture2D customMaskTexture = GetCustomMaskTexture(clothesKind);
+				if (!(customMaskTexture != null))
+				{
+					continue;
+				}
+				mat.SetTexture(MultiplyShader.MaskTex[i], (Texture)(object)customMaskTexture);
+				byte state = ((ChaFile)((ChaInfo)((CharaCustomFunctionController)this).ChaControl).chaFile).status.clothesState[clothesKind];
+				if (state <= 3)
+				{
+					mat.SetVector(MultiplyShader.MaskState[i], (Vector4)MultiplyShader.GetState(state));
+				}
+			}
+			catch (Exception ex)
+			{
+				ChaAlphaMask.Logger.LogWarning((object)ex);
+			}
+		}
+	}
+
 	internal void ChangeClothesState(int clothesKind, byte? state)
 	{
 		if (!((ChaInfo)((CharaCustomFunctionController)this).ChaControl).loadEnd)
 		{
 			return;
+		}
+		if (HasAnyCustomMask)
+		{
+			hasChangedBodyMaskProp = true;
 		}
 		int category = ToCategoryNo(clothesKind);
 		int localSlot = ToLocalSlot(clothesKind);
@@ -522,7 +763,8 @@ public class AlphaMaskController : CharaCustomFunctionController
 		//IL_0066: Expected Obj, but got Unknown
 		bool flag = SyncClothesKind.Cast<int>().Any((int x) => x != -1);
 		bool flag2 = kindPairBodyMask != null && kindPairBodyMask.Count > 0;
-		if (!flag && !flag2)
+		bool flag3 = customMasks != null && customMasks.Count > 0;
+		if (!flag && !flag2 && !flag3)
 		{
 			((CharaCustomFunctionController)this).SetExtendedData((PluginData)null);
 			return;
@@ -540,6 +782,10 @@ public class AlphaMaskController : CharaCustomFunctionController
 			if (flag2)
 			{
 				val.data.Add("kindPairBodyMask", MessagePackSerializer.Serialize<List<KindPair>>(kindPairBodyMask));
+			}
+			if (flag3)
+			{
+				val.data.Add("CustomMasks", MessagePackSerializer.Serialize<List<CustomMask>>(customMasks));
 			}
 			((CharaCustomFunctionController)this).SetExtendedData(val);
 		}
@@ -560,9 +806,14 @@ public class AlphaMaskController : CharaCustomFunctionController
 			}
 		}
 		kindPairBodyMask.Clear();
+		customMasks.Clear();
+		InvalidateAllMaskTextures();
+		hasChangedBodyMaskProp = true;
 		PluginData extendedData = ((CharaCustomFunctionController)this).GetExtendedData();
 		if (extendedData == null)
 		{
+			TryImportPlusPackMasks();
+			ReloadClothesState();
 			return;
 		}
 		try
@@ -579,11 +830,85 @@ public class AlphaMaskController : CharaCustomFunctionController
 			{
 				kindPairBodyMask = MessagePackSerializer.Deserialize<List<KindPair>>((byte[])value2);
 			}
+			bool flag = false;
+			if (extendedData.data.TryGetValue("CustomMasks", out var value3) && value3 != null)
+			{
+				customMasks = MessagePackSerializer.Deserialize<List<CustomMask>>((byte[])value3);
+				customMasks.RemoveAll((CustomMask x) => x == null || x.png == null);
+				flag = customMasks.Count > 0;
+			}
+			if (!flag)
+			{
+				TryImportPlusPackMasks();
+			}
 			ReloadClothesState();
 		}
 		catch (Exception ex)
 		{
 			ChaAlphaMask.Logger.LogError((object)ex);
+		}
+	}
+
+	/// <summary>读取 Madevil PlusPack - ChaAlphaMask（madevil.kk.PPCAM）存在卡片里的遮罩，方便旧卡片继续用。</summary>
+	private void TryImportPlusPackMasks()
+	{
+		try
+		{
+			if (!ChaAlphaMask.ImportPlusPackMasks.Value || customMasks.Count > 0)
+			{
+				return;
+			}
+			ChaFile val = ((ChaInfo)((CharaCustomFunctionController)this).ChaControl).chaFile;
+			PluginData pluginData = ((val != null) ? ExtendedSave.GetExtendedDataById(val, "madevil.kk.PPCAM") : null);
+			if (pluginData == null && MakerAPI.InsideMaker && MakerAPI.LastLoadedChaFile != null)
+			{
+				pluginData = ExtendedSave.GetExtendedDataById(MakerAPI.LastLoadedChaFile, "madevil.kk.PPCAM");
+			}
+			if (pluginData == null || pluginData.data == null)
+			{
+				return;
+			}
+			if (!pluginData.data.TryGetValue("BodyMaskList", out object value) || value == null)
+			{
+				return;
+			}
+			if (!pluginData.data.TryGetValue("TextureDictionary", out object value2) || value2 == null)
+			{
+				return;
+			}
+			Dictionary<int, int?[]> dictionary = MessagePackSerializer.Deserialize<Dictionary<int, int?[]>>((byte[])value);
+			Dictionary<int, byte[]> dictionary2 = MessagePackSerializer.Deserialize<Dictionary<int, byte[]>>((byte[])value2);
+			int num = 0;
+			foreach (KeyValuePair<int, int?[]> item in dictionary)
+			{
+				for (int i = 0; i < item.Value.Length && i < 8; i++)
+				{
+					if (!item.Value[i].HasValue)
+					{
+						continue;
+					}
+					if (!dictionary2.TryGetValue(item.Value[i].Value, out byte[] value3) || value3 == null)
+					{
+						continue;
+					}
+					customMasks.Add(new CustomMask
+					{
+						coordinateType = item.Key,
+						clothesKind = i + 1,
+						png = value3
+					});
+					num++;
+				}
+			}
+			if (num > 0)
+			{
+				ChaAlphaMask.Logger.LogInfo((object)$"Imported {num} mask texture(s) from PlusPack data (madevil.kk.PPCAM)");
+				hasChangedBodyMaskProp = true;
+			}
+		}
+		catch (Exception ex)
+		{
+			ChaAlphaMask.Logger.LogWarning((object)("Failed to import PlusPack mask data: " + ex.Message));
 		}
 	}
 
@@ -597,6 +922,7 @@ public class AlphaMaskController : CharaCustomFunctionController
 		{
 			ObsCharacter[j].Dispose();
 		}
+		InvalidateAllMaskTextures();
 		base.OnDestroy();
 	}
 
@@ -625,6 +951,19 @@ public class AlphaMaskController : CharaCustomFunctionController
 					kindPairBodyMask.RemoveAll((KindPair x) => x.coordinateType == ((ChaInfo)((CharaCustomFunctionController)this).ChaControl).fileStatus.coordinateType);
 					kindPairBodyMask.AddRange(list);
 				}
+				customMasks.RemoveAll((CustomMask x) => x.coordinateType == ((ChaInfo)((CharaCustomFunctionController)this).ChaControl).fileStatus.coordinateType);
+				if (coordinateExtendedData.data.TryGetValue("CustomMasks", out var value3) && value3 != null)
+				{
+					List<CustomMask> list2 = MessagePackSerializer.Deserialize<List<CustomMask>>((byte[])value3);
+					list2.ForEach((CustomMask x) =>
+					{
+						x.coordinateType = ((ChaInfo)((CharaCustomFunctionController)this).ChaControl).fileStatus.coordinateType;
+					});
+					list2.RemoveAll((CustomMask x) => x == null || x.png == null);
+					customMasks.AddRange(list2);
+				}
+				InvalidateAllMaskTextures();
+				hasChangedBodyMaskProp = true;
 				ReloadClothesState();
 				return;
 			}
@@ -639,6 +978,9 @@ public class AlphaMaskController : CharaCustomFunctionController
 			SyncClothesKind[((ChaInfo)((CharaCustomFunctionController)this).ChaControl).fileStatus.coordinateType, num] = -1;
 		}
 		kindPairBodyMask.RemoveAll((KindPair x) => x.coordinateType == ((ChaInfo)((CharaCustomFunctionController)this).ChaControl).fileStatus.coordinateType);
+		customMasks.RemoveAll((CustomMask x) => x.coordinateType == ((ChaInfo)((CharaCustomFunctionController)this).ChaControl).fileStatus.coordinateType);
+		InvalidateAllMaskTextures();
+		hasChangedBodyMaskProp = true;
 	}
 
 	protected override void OnCoordinateBeingSaved(ChaFileCoordinate coordinate)
@@ -654,7 +996,9 @@ public class AlphaMaskController : CharaCustomFunctionController
 		bool flag = array.Any((int x) => x != -1);
 		List<KindPair> list = kindPairBodyMask.Where((KindPair x) => x.coordinateType == ((ChaInfo)((CharaCustomFunctionController)this).ChaControl).fileStatus.coordinateType).ToList();
 		bool flag2 = list != null && list.Count > 0;
-		if (!flag && !flag2)
+		List<CustomMask> list2 = customMasks.Where((CustomMask x) => x.coordinateType == ((ChaInfo)((CharaCustomFunctionController)this).ChaControl).fileStatus.coordinateType).ToList();
+		bool flag3 = list2 != null && list2.Count > 0;
+		if (!flag && !flag2 && !flag3)
 		{
 			((CharaCustomFunctionController)this).SetCoordinateExtendedData(coordinate, (PluginData)null);
 			return;
@@ -672,6 +1016,10 @@ public class AlphaMaskController : CharaCustomFunctionController
 			if (flag2)
 			{
 				val.data.Add("kindPairBodyMask", MessagePackSerializer.Serialize<List<KindPair>>(list));
+			}
+			if (flag3)
+			{
+				val.data.Add("CustomMasks", MessagePackSerializer.Serialize<List<CustomMask>>(list2));
 			}
 			((CharaCustomFunctionController)this).SetCoordinateExtendedData(coordinate, val);
 		}

@@ -7,7 +7,7 @@
     <LangVersion>latest</LangVersion>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <EnableDefaultItems>false</EnableDefaultItems>
-    <Version>1.0.0</Version>
+    <Version>1.1.0</Version>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <!-- 游戏目录，可通过 -p:GameDir=... 覆盖 -->
     <GameDir Condition="'$(GameDir)' == ''">E:\game\GDAkk\KoikatuSunshine</GameDir>
@@ -44,7 +44,8 @@
       <HintPath>$(PluginsDir)\KKS_Plugins\KKS_MaterialEditor.dll</HintPath>
       <Private>false</Private>
     </Reference>
-    <Reference Include="KKS_ForceHighPoly">
+    <!-- Force High Poly 是可选依赖，代码里用反射读取，没装也能编译 -->
+    <Reference Include="KKS_ForceHighPoly" Condition="Exists('$(PluginsDir)\KKS_Plugins\KKS_ForceHighPoly.dll')">
       <HintPath>$(PluginsDir)\KKS_Plugins\KKS_ForceHighPoly.dll</HintPath>
       <Private>false</Private>
     </Reference>
