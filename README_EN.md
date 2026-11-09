@@ -1,5 +1,7 @@
 <h1 align="center">ChaAlphaMask</h1>
 
+<p align="center"><b>Built for KoikatsuSunshine (KKS); Koikatu (KK) is optional</b></p>
+
 <p align="center"><a href="README.md">简体中文</a> | <b>English</b></p>
 
 A plugin that gives clothing "body masks / alpha masks". A mask can come from a zipmod (`manifest.xml`) or be imported straight into the character card from the in-game maker (**no XML needed**).

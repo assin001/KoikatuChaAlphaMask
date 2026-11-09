@@ -1,5 +1,7 @@
 <h1 align="center">ChaAlphaMask</h1>
 
+<p align="center"><b>适配 KoikatsuSunshine（KKS），Koikatu（KK）可选</b></p>
+
 <p align="center"><b>简体中文</b> | <a href="README_EN.md">English</a></p>
 
 给衣服加「身体遮罩 / Alpha 遮罩」的插件。遮罩有两种来源：zipmod 在 `manifest.xml` 里指定，或者直接在捏人界面把 PNG 导入到卡片里（**不需要写 XML**）。
