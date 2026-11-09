@@ -6,7 +6,7 @@
 
 给衣服加「身体遮罩 / Alpha 遮罩」的插件。遮罩有两种来源：zipmod 在 `manifest.xml` 里指定，或者直接在捏人界面把 PNG 导入到卡片里（**不需要写 XML**）。
 
-本仓库是反编译适配后的源码版本，一套源码同时构建 Koikatu 与 KoikatuSunshine 两个插件。
+本仓库是反编译适配后的源码版本，一套源码同时构建 Koikatu 与 KoikatuSunshine 两个插件。本插件主要补全 KoikatsuSunshine 缺少该插件的情况。
 
 > ## ⚠️ 请先读这里
 >

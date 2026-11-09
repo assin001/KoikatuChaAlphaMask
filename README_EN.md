@@ -6,7 +6,7 @@
 
 A plugin that gives clothing "body masks / alpha masks". A mask can come from a zipmod (`manifest.xml`) or be imported straight into the character card from the in-game maker (**no XML needed**).
 
-This repository is a decompiled and re-adapted source tree that builds both the Koikatu and KoikatsuSunshine plugins from a single set of sources.
+This repository is a decompiled and re-adapted source tree that builds both the Koikatu and KoikatsuSunshine plugins from a single set of sources. The plugin primarily exists to fill in the missing plugin on KoikatsuSunshine.
 
 > ## ⚠️ Read this first
 >
