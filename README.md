@@ -1,8 +1,17 @@
 <h1 align="center">ChaAlphaMask</h1>
 
+<p align="center"><b>简体中文</b> | <a href="README_EN.md">English</a></p>
+
 给衣服加「身体遮罩 / Alpha 遮罩」的插件。遮罩有两种来源：zipmod 在 `manifest.xml` 里指定，或者直接在捏人界面把 PNG 导入到卡片里（**不需要写 XML**）。
 
 本仓库是反编译适配后的源码版本，一套源码同时构建 Koikatu 与 KoikatuSunshine 两个插件。
+
+> ## ⚠️ 请先读这里
+>
+> - **Koikatu 的整合包（HF Patch、BetterRepack 等）自己就自带这个插件**（HF Patch 里是 `Character Alpha Mask v1.0.0`），原版功能已经能用，**KK 版不太建议塞进整合包**，很容易因为同名覆盖、GUID 重复而冲突 / 不兼容。
+> - **本插件主要是给 KoikatsuSunshine 补全缺失插件**用的：当 KKS 环境里没有这个插件时，用 `KKS_ChaAlphaMask.dll`。
+> - 确实要装在 Koikatu 上时：用 `KK_ChaAlphaMask.dll` **覆盖** `BepInEx\plugins\KK_ChaAlphaMask.dll`，**不要改名并存**，也不要和其它来源的同名插件混装。
+> - 详细说明见 [与 HF Patch / 整合包共存](#与-hf-patch--整合包共存)。
 
 ## 功能
 
@@ -139,6 +148,39 @@ dotnet build KKS_ChaAlphaMask\KKS_ChaAlphaMask.csproj -c Release -p:GameDir="E:\
 - 角色卡：保存全部套装的遮罩
 - 服装卡：只保存当前套装的遮罩
 - 与 zipmod manifest 遮罩同时存在时，**卡片里的遮罩优先**，方便临时修改别人做的衣服而不动 mod 本身
+
+## 与 HF Patch / 整合包共存
+
+**Koikatu 的整合包自带这个插件**，这是"冲突 / 不兼容"举报的主要来源，请按下面的方式处理。
+
+### 已知自带情况
+
+| 整合包 | 组件名 | 版本 | 安装位置 |
+|---|---|---|---|
+| [KK-HF_Patch](https://github.com/ManlyMarco/KK-HF_Patch) | `Content\KK_ChaAlphaMask`（`full` / `extra` 预设默认勾选） | `Character Alpha Mask v1.0.0`（作者 nakay） | `BepInEx\plugins\KK_ChaAlphaMask.dll` |
+| BetterRepack（RX 系列）等 | 随包插件 | 多为 1.0.0 | `BepInEx\plugins\KK_ChaAlphaMask.dll` |
+
+文件名与本插件发行包**完全相同**，GUID 也都是 `nakay.kk.ChaAlphaMask`。
+
+### 正确做法
+
+- 想用本插件的新功能时：**用 `KK_ChaAlphaMask.dll` 覆盖** `BepInEx\plugins\KK_ChaAlphaMask.dll`
+- HF Patch / 整合包**重装、修复、更新之后会把 1.0.0 覆盖回来**（窗口消失、新卡片数据读不出来），需要再覆盖一次
+- 只用原版功能的话，不必装这个 KK 版，整合包自带的就够了
+
+### 错误做法（会出现"不兼容"）
+
+- **改名并存**：把 DLL 改成别的名字（如 `KK_ChaAlphaMask111.dll`）放进 `plugins`。两个插件 GUID 相同 → BepInEx 会跳过其中一个，KKAPI 的 `RegisterExtraBehaviour` 还会因为控制 GUID 重复抛异常，表现为插件不生效 + 日志报错
+- **和别的来源的同名插件混装**（例如同时装了 PlusPack 的同类插件）
+
+### 卡片数据注意
+
+本插件在扩展数据里新增了 `CustomMasks` 键（卡片内遮罩）。**1.0.0 不认识这个键**：如果卡片被 1.0.0 版本存过一次，KKAPI 会整块替换该 GUID 的扩展数据，卡片内的遮罩就会丢失。反过来，本插件能正常读取 1.0.0 时代的卡片（GUID 相同，旧字段照常解析）。
+
+### 建议
+
+- **KoikatsuSunshine 用户**：KKS 环境通常没有这个插件，直接用 `KKS_ChaAlphaMask.dll` 即可，不存在上述覆盖问题
+- **Koikatu 用户**：优先用整合包自带的版本；确认要吃新功能（卡片内遮罩窗口）再覆盖，并把覆盖步骤记在整合包更新流程里
 
 ## 与 KoikatuSunshine 的差异
 
