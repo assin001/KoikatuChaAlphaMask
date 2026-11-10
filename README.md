@@ -82,6 +82,7 @@ src/                                       共享源码
   MakerGui.cs                              捏人界面控件
   MaskProperty.cs                          zipmod manifest 解析
   MultiplyShader.cs                        遮罩相乘着色器属性 ID
+  UiText.cs                                界面文本（中文 / 英文两套，编译开关切换）
   Patch.cs                                 Harmony 补丁
   Util.cs                                  工具方法
   KK_ChaAlphaMask.resources.alphamaskmultiply   内嵌遮罩相乘 AssetBundle
@@ -103,6 +104,26 @@ dotnet build KKS_ChaAlphaMask\KKS_ChaAlphaMask.csproj -c Release -p:GameDir="E:\
 ```
 
 `-p:GameDir=` 指向游戏根目录（含 `Koikatu_Data\Managed` 与 `BepInEx`），不传则用 csproj 里的默认路径。
+
+## 英文界面版
+
+窗口、右侧 Control Panel 开关、捏人界面控件（`ボディマスク` / 服装下拉）与配置说明都有英文版本，功能和卡片数据完全一致，只是界面文本不同：
+
+| 游戏 | 中文版 | 英文版 |
+|---|---|---|
+| Koikatu | `KK_ChaAlphaMask.dll` | `KK_ChaAlphaMask_EN.dll` |
+| KoikatsuSunshine | `KKS_ChaAlphaMask.dll` | `KKS_ChaAlphaMask_EN.dll` |
+
+- 两个版本 GUID 都是 `nakay.kk.ChaAlphaMask`，**只能装一个**；同时放进 `plugins` 会因重名 / GUID 重复导致插件不生效
+- 卡片数据格式相同，中英文版可以互相读取对方保存的卡片
+- 构建英文版（加 `-p:EnUi=true`），产物在 `bin\Release\en\`，不会覆盖中文版输出：
+
+```powershell
+dotnet build KK_ChaAlphaMask\KK_ChaAlphaMask.csproj -c Release -p:EnUi=true
+dotnet build KKS_ChaAlphaMask\KKS_ChaAlphaMask.csproj -c Release -p:EnUi=true
+```
+
+界面文本集中在 `src/UiText.cs`，中英文两套并列，改文案只需改这一个文件。
 
 ## 依赖
 
@@ -213,6 +234,7 @@ dotnet build KKS_ChaAlphaMask\KKS_ChaAlphaMask.csproj -c Release -p:GameDir="E:\
 
 - 修复窗口里的遮罩缩略图把整张不透明黑底画成白底的问题（只用 RGB 亮度算可见度，黑底正确透明）
 - 导出目录默认改为游戏根目录下的 `UserData\Overlays`，旧配置里的 `UserData\AlphaMask` 会自动迁移
+- 新增英文界面版（`KK_ChaAlphaMask_EN.dll` / `KKS_ChaAlphaMask_EN.dll`），窗口与捏人界面控件为英文，与中文版二选一安装
 
 ### 1.1
 

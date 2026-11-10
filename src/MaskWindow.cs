@@ -27,23 +27,17 @@ internal class MaskWindow : MonoBehaviour
 
 	private static readonly int[] ClothesKindList = { 1, 2, 3, 4, 5, 6, 7, 8 };
 
-	private static readonly string[] ClothesKindNames = { "下衣", "胸罩", "短裤", "手套", "裤袜", "袜子", "室内鞋", "室外鞋" };
+	private static readonly GUIContent TitleContent = new GUIContent(UiText.WindowTitle);
 
-	private static readonly string[] ClothesKindNamesNone = { "下衣（未装备）", "胸罩（未装备）", "短裤（未装备）", "手套（未装备）", "裤袜（未装备）", "袜子（未装备）", "室内鞋（未装备）", "室外鞋（未装备）" };
+	private static readonly GUIContent CloseContent = new GUIContent("×", UiText.CloseTooltip);
 
-	private static readonly GUIContent TitleContent = new GUIContent("角色Alpha遮罩");
+	private static readonly GUIContent ShowAllContent = new GUIContent(UiText.ShowAll, UiText.ShowAllTooltip);
 
-	private static readonly GUIContent CloseContent = new GUIContent("×", "关闭窗口（也可点右侧控制栏的开关或按快捷键）");
+	private static readonly GUIContent DeleteContent = new GUIContent(UiText.Delete, UiText.DeleteTooltip);
 
-	private static readonly GUIContent ShowAllContent = new GUIContent(" 全部显示", "显示当前未装备的槽位");
+	private static readonly GUIContent ExportContent = new GUIContent(UiText.Export, UiText.ExportTooltip);
 
-	private static readonly GUIContent DeleteContent = new GUIContent("删除", "移除该槽位的遮罩");
-
-	private static readonly GUIContent ExportContent = new GUIContent("导出", "把当前遮罩保存为 PNG");
-
-	private static readonly GUIContent ImportContent = new GUIContent("导入", "导入 PNG 遮罩（推荐 512x512）");
-
-	private const string HintText = "遮罩画法：黑底 + 纯红 = 要遮蔽的身体部位，尺寸推荐 512x512";
+	private static readonly GUIContent ImportContent = new GUIContent(UiText.Import, UiText.ImportTooltip);
 
 	// 配色：中灰蓝底 + 浅灰文字 + 蓝色主按钮
 	private static readonly Color ColWindow = new Color(0.247f, 0.275f, 0.337f, 0.97f);
@@ -294,10 +288,10 @@ internal class MaskWindow : MonoBehaviour
 		scrollPos = GUILayout.BeginScrollView(scrollPos, false, true, GUILayout.ExpandWidth(true), GUILayout.ExpandHeight(true));
 		for (int i = 0; i < ClothesKindList.Length; i++)
 		{
-			DrawSlot(ClothesKindList[i], ClothesKindNames[i], ClothesKindNamesNone[i]);
+			DrawSlot(ClothesKindList[i], UiText.SlotNames[i], UiText.SlotNamesEmpty[i]);
 		}
 		GUILayout.EndScrollView();
-		GUILayout.Label(HintText, hintStyle, GUILayout.ExpandWidth(true));
+		GUILayout.Label(UiText.Hint, hintStyle, GUILayout.ExpandWidth(true));
 		GUILayout.EndArea();
 	}
 
@@ -325,7 +319,7 @@ internal class MaskWindow : MonoBehaviour
 		Texture2D customMaskPreview = ctrl.GetCustomMaskPreview(clothesKind);
 		GUILayout.BeginHorizontal(boxStyle, GUILayout.Height(ThumbSize + 12f), GUILayout.ExpandWidth(true));
 		GUILayout.Box(customMaskPreview != null ? (Texture)customMaskPreview : texThumb, thumbStyle, GUILayout.Width(ThumbSize), GUILayout.Height(ThumbSize));
-		GUILayout.Label(flag ? clothesName : clothesNameNone, labelStyle, GUILayout.Width(96f));
+		GUILayout.Label(flag ? clothesName : clothesNameNone, labelStyle, GUILayout.Width(120f));
 		GUILayout.FlexibleSpace();
 		bool enabled = GUI.enabled;
 		GUI.enabled = flag2;
@@ -548,7 +542,7 @@ internal class MaskWindow : MonoBehaviour
 						ImportFile(clothesKind, path);
 					});
 				}
-			}, "选择 Alpha 遮罩 PNG（推荐 512x512）", initialDir, "PNG 图片 (*.png)|*.png", "png", OpenFileDialog.OpenSaveFileDialgueFlags.OFN_FILEMUSTEXIST | OpenFileDialog.OpenSaveFileDialgueFlags.OFN_EXPLORER | OpenFileDialog.OpenSaveFileDialgueFlags.OFN_LONGNAMES);
+			}, UiText.ImportDialogTitle, initialDir, UiText.ImportDialogFilter, "png", OpenFileDialog.OpenSaveFileDialgueFlags.OFN_FILEMUSTEXIST | OpenFileDialog.OpenSaveFileDialgueFlags.OFN_EXPLORER | OpenFileDialog.OpenSaveFileDialgueFlags.OFN_LONGNAMES);
 		}
 		catch (Exception ex)
 		{

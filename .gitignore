@@ -5,6 +5,9 @@ obj/
 *.user
 *.suo
 
+# 发行包（本地汇总，上传到 GitHub Release 用）
+dist/
+
 # 原始反编译二进制（仅本地参考）
 /KK_ChaAlphaMask.dll
 

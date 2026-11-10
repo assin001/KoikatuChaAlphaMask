@@ -82,6 +82,7 @@ src/                                       Shared sources
   MakerGui.cs                              Maker UI controls
   MaskProperty.cs                          zipmod manifest parsing
   MultiplyShader.cs                        Shader property IDs for the multiply pass
+  UiText.cs                                UI strings (Chinese / English sets, switched at compile time)
   Patch.cs                                 Harmony patches
   Util.cs                                  Helpers
   KK_ChaAlphaMask.resources.alphamaskmultiply   Embedded AssetBundle with the multiply shader
@@ -103,6 +104,26 @@ dotnet build KKS_ChaAlphaMask\KKS_ChaAlphaMask.csproj -c Release -p:GameDir="E:\
 ```
 
 `-p:GameDir=` points at the game root (the folder containing `Koikatu_Data\Managed` and `BepInEx`). If omitted, the default path from the csproj is used.
+
+## English UI build
+
+The mask window, the Control Panel toggle, the maker controls (`ボディマスク` / clothing dropdown) and the config descriptions are also available in English. Features and card data are identical; only the UI strings differ:
+
+| Game | Chinese UI | English UI |
+|---|---|---|
+| Koikatu | `KK_ChaAlphaMask.dll` | `KK_ChaAlphaMask_EN.dll` |
+| KoikatsuSunshine | `KKS_ChaAlphaMask.dll` | `KKS_ChaAlphaMask_EN.dll` |
+
+- Both builds share the GUID `nakay.kk.ChaAlphaMask`, so **install only one of them**; dropping both into `plugins` gives a duplicate-name / duplicate-GUID conflict and the plugin stops working
+- Card data is identical, so the two builds read each other's cards
+- Build the English UI with `-p:EnUi=true`; the output goes to `bin\Release\en\` and does not overwrite the Chinese build:
+
+```powershell
+dotnet build KK_ChaAlphaMask\KK_ChaAlphaMask.csproj -c Release -p:EnUi=true
+dotnet build KKS_ChaAlphaMask\KKS_ChaAlphaMask.csproj -c Release -p:EnUi=true
+```
+
+All UI strings live in `src/UiText.cs` with the Chinese and English sets side by side.
 
 ## Dependencies
 
@@ -213,6 +234,7 @@ This plugin adds a `CustomMasks` key to the plugin data. **1.0.0 does not know a
 
 - Fixed mask thumbnails in the window rendering a fully opaque black background as white (visibility is now computed from RGB luminance only, so black stays transparent)
 - Default export folder changed to `UserData\Overlays` under the game root; the old `UserData\AlphaMask` value in existing configs is migrated automatically
+- Added an English UI build (`KK_ChaAlphaMask_EN.dll` / `KKS_ChaAlphaMask_EN.dll`) with an English mask window and maker controls; install it instead of the Chinese build, not alongside it
 
 ### 1.1
 

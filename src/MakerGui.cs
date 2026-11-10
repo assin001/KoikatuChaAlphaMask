@@ -58,11 +58,7 @@ internal class MakerGui
 		bodyMaskToggle01 = new MakerToggle[9];
 		bodyMaskToggle02 = new MakerToggle[3];
 		string[] array = new string[9] { "tglTop", "tglBot", "tglBra", "tglShorts", "tglGloves", "tglPanst", "tglSocks", "tglInnerShoes", "tglOuterShoes" };
-		string[] array2 = new string[17]
-		{
-			"無し", "トップス", "ボトムス", "ブラ", "ショーツ", "手袋", "パンスト", "靴下", "靴", "トップス(反転)",
-			"ボトムス(反転)", "ブラ(反転)", "ショーツ(反転)", "手袋(反転)", "パンスト(反転)", "靴下(反転)", "靴(反転)"
-		};
+		string[] array2 = UiText.SyncKindNames;
 		for (int i = 0; i < array.Length; i++)
 		{
 			int sc = i;
@@ -74,7 +70,7 @@ internal class MakerGui
 			}
 			if (i != 0)
 			{
-				bodyMaskToggle01[sc] = ((RegisterCustomControlsEvent)e).AddControl<MakerToggle>(new MakerToggle(builtInCategory, "ボディマスク", true, (BaseUnityPlugin)(object)ChaAlphaMask.Instance));
+				bodyMaskToggle01[sc] = ((RegisterCustomControlsEvent)e).AddControl<MakerToggle>(new MakerToggle(builtInCategory, UiText.BodyMask, true, (BaseUnityPlugin)(object)ChaAlphaMask.Instance));
 				CharacterExtensions.BindToFunctionController<AlphaMaskController, bool>((BaseEditableGuiEntry<bool>)(object)bodyMaskToggle01[sc], (AlphaMaskController ctrl) => ctrl.IsBodyMaskActive(sc), (AlphaMaskController ctrl, bool tgl) =>
 				{
 					if (tgl)
@@ -96,7 +92,7 @@ internal class MakerGui
 			if (i == 0 || 2 == i)
 			{
 				int sc2 = sc + 1;
-				bodyMaskToggle02[sc] = ((RegisterCustomControlsEvent)e).AddControl<MakerToggle>(new MakerToggle(builtInCategory, (sc == 0) ? "ボディマスク\u3000ボトムス" : "ボディマスク\u3000ショーツ", true, (BaseUnityPlugin)(object)ChaAlphaMask.Instance));
+				bodyMaskToggle02[sc] = ((RegisterCustomControlsEvent)e).AddControl<MakerToggle>(new MakerToggle(builtInCategory, (sc == 0) ? UiText.BodyMaskBottoms : UiText.BodyMaskShorts, true, (BaseUnityPlugin)(object)ChaAlphaMask.Instance));
 				CharacterExtensions.BindToFunctionController<AlphaMaskController, bool>((BaseEditableGuiEntry<bool>)(object)bodyMaskToggle02[sc], (AlphaMaskController ctrl) => ctrl.IsBodyMaskActive(sc2), (AlphaMaskController ctrl, bool tgl) =>
 				{
 					if (tgl)
@@ -119,7 +115,7 @@ internal class MakerGui
 			{
 				continue;
 			}
-			alphaMaskDropdown[sc] = ((RegisterCustomControlsEvent)e).AddControl<MakerDropdown>(new MakerDropdown("アルファマスク", array2, builtInCategory, 0, (BaseUnityPlugin)(object)ChaAlphaMask.Instance));
+			alphaMaskDropdown[sc] = ((RegisterCustomControlsEvent)e).AddControl<MakerDropdown>(new MakerDropdown(UiText.AlphaMask, array2, builtInCategory, 0, (BaseUnityPlugin)(object)ChaAlphaMask.Instance));
 			CharacterExtensions.BindToFunctionController<AlphaMaskController, int>((BaseEditableGuiEntry<int>)(object)alphaMaskDropdown[sc], (AlphaMaskController ctrl) => ctrl.SyncClothesKind[((ChaInfo)((CharaCustomFunctionController)ctrl).ChaControl).fileStatus.coordinateType, sc] + 1, (AlphaMaskController ctrl, int sync) =>
 			{
 				sync--;
@@ -212,13 +208,13 @@ internal class MakerGui
 			switch (((ChaInfo)((CharaCustomFunctionController)ctrl).ChaControl).infoClothes[0].Id)
 			{
 			case 1:
-				((TMP_Text)textMeshProTop).text = "アルファマスク\u3000胴";
+				((TMP_Text)textMeshProTop).text = UiText.AlphaMaskBody;
 				break;
 			case 2:
-				((TMP_Text)textMeshProTop).text = "アルファマスク\u3000アウター";
+				((TMP_Text)textMeshProTop).text = UiText.AlphaMaskOuter;
 				break;
 			default:
-				((TMP_Text)textMeshProTop).text = "アルファマスク";
+				((TMP_Text)textMeshProTop).text = UiText.AlphaMask;
 				break;
 			}
 		}

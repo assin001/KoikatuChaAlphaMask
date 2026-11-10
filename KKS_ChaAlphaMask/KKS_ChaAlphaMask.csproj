@@ -16,6 +16,15 @@
     <PluginsDir>$(GameDir)\BepInEx\plugins</PluginsDir>
   </PropertyGroup>
 
+  <!-- 英文界面版：-p:EnUi=true 输出 bin\Release\en\KKS_ChaAlphaMask_EN.dll（GUID 与中文版相同，安装时二选一）。
+       输出与中间目录都要和中文版分开，否则 MSBuild 的增量清理会把另一版本的 dll 删掉。 -->
+  <PropertyGroup Condition="'$(EnUi)' == 'true'">
+    <AssemblyName>KKS_ChaAlphaMask_EN</AssemblyName>
+    <DefineConstants>$(DefineConstants);CHA_ALPHA_MASK_EN</DefineConstants>
+    <OutputPath>bin\$(Configuration)\en\</OutputPath>
+    <IntermediateOutputPath>obj\en\$(Configuration)\</IntermediateOutputPath>
+  </PropertyGroup>
+
   <ItemGroup>
     <Compile Include="..\src\*.cs" />
     <EmbeddedResource Include="..\src\KK_ChaAlphaMask.resources.alphamaskmultiply">
