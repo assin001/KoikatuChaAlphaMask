@@ -129,7 +129,8 @@ All UI strings live in `src/UiText.cs` with the Chinese and English sets side by
 
 With a translation plugin installed (`EnableIMGUI=True`) the English UI gets machine-translated back into Chinese, which shows up as a mixed Chinese/English window. The English build handles this:
 
-- Every English UI string is prefixed with an invisible `U+180E` character. AutoTranslator's default `IgnoreTextStartingWith=\u180e;` skips such strings, so they are not translated (as long as that setting is unchanged)
+- English strings inside the window (title / slot names / buttons / hint) are prefixed with an invisible `U+180E` character. AutoTranslator's default `IgnoreTextStartingWith=\u180e;` skips such strings, so they are not translated (as long as that setting is unchanged)
+- The Control Panel toggle and the maker controls are UGUI / TextMeshPro text, where `U+180E` renders as an empty box, so they are not prefixed and may still be translated; use the blacklist below if that bothers you
 - If it still gets translated, blacklist the plugin for IMGUI — in `BepInEx\config\AutoTranslatorConfig.ini`, section `[Behaviour]`:
   `BlacklistedIMGUIPlugins=KK_ChaAlphaMask;KK_ChaAlphaMask_EN;KKS_ChaAlphaMask;KKS_ChaAlphaMask_EN;`
 - The Chinese build needs no handling (its strings are already Chinese)

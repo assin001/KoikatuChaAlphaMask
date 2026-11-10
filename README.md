@@ -129,7 +129,8 @@ dotnet build KKS_ChaAlphaMask\KKS_ChaAlphaMask.csproj -c Release -p:EnUi=true
 
 装了翻译插件（`EnableIMGUI=True`）时，翻译插件会把英文界面再翻成中文，表现为窗口里中英混杂。英文版已处理：
 
-- 所有英文界面文本前带一个不可见字符 `U+180E`，AutoTranslator 默认配置 `IgnoreTextStartingWith=\u180e;` 会直接跳过，不再翻译（前提是没改过这项配置）
+- 窗口内的英文文本（标题 / 槽位名 / 按钮 / 提示）前带一个不可见字符 `U+180E`，AutoTranslator 默认配置 `IgnoreTextStartingWith=\u180e;` 会直接跳过，不再翻译（前提是没改过这项配置）
+- 右侧 Control Panel 开关与捏人界面控件是 UGUI / TextMeshPro 文本，这些字体里 `U+180E` 会显示成方框，所以没有加前缀，仍可能被翻译插件译成中文；在意的话用下面的黑名单
 - 若仍被翻译，把本插件加进 IMGUI 黑名单 —— `BepInEx\config\AutoTranslatorConfig.ini` 的 `[Behaviour]` 段：
   `BlacklistedIMGUIPlugins=KK_ChaAlphaMask;KK_ChaAlphaMask_EN;KKS_ChaAlphaMask;KKS_ChaAlphaMask_EN;`
 - 中文版不需要任何处理（文本本来就是中文）

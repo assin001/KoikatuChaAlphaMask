@@ -13,7 +13,7 @@ internal class MaskWindow : MonoBehaviour
 {
 	private const int WindowID = 1128355395;
 
-	private const float WindowWidth = 420f;
+	private const float WindowWidth = 440f;
 
 	private const float WindowHeight = 520f;
 
@@ -319,20 +319,20 @@ internal class MaskWindow : MonoBehaviour
 		Texture2D customMaskPreview = ctrl.GetCustomMaskPreview(clothesKind);
 		GUILayout.BeginHorizontal(boxStyle, GUILayout.Height(ThumbSize + 12f), GUILayout.ExpandWidth(true));
 		GUILayout.Box(customMaskPreview != null ? (Texture)customMaskPreview : texThumb, thumbStyle, GUILayout.Width(ThumbSize), GUILayout.Height(ThumbSize));
-		GUILayout.Label(flag ? clothesName : clothesNameNone, labelStyle, GUILayout.Width(120f));
+		GUILayout.Label(flag ? clothesName : clothesNameNone, labelStyle, GUILayout.Width(130f));
 		GUILayout.FlexibleSpace();
 		bool enabled = GUI.enabled;
 		GUI.enabled = flag2;
-		if (GUILayout.Button(DeleteContent, buttonStyle, GUILayout.Width(44f), GUILayout.Height(26f)))
+		if (GUILayout.Button(DeleteContent, buttonStyle, GUILayout.Width(UiText.ActionButtonWidth), GUILayout.Height(26f)))
 		{
 			ctrl.SetCustomMask(clothesKind, null);
 		}
-		if (GUILayout.Button(ExportContent, buttonStyle, GUILayout.Width(44f), GUILayout.Height(26f)))
+		if (GUILayout.Button(ExportContent, buttonStyle, GUILayout.Width(UiText.ActionButtonWidth), GUILayout.Height(26f)))
 		{
 			Export(clothesKind, clothesName, customMaskPng);
 		}
 		GUI.enabled = enabled;
-		if (GUILayout.Button(ImportContent, primaryButtonStyle, GUILayout.Width(44f), GUILayout.Height(26f)))
+		if (GUILayout.Button(ImportContent, primaryButtonStyle, GUILayout.Width(UiText.ActionButtonWidth), GUILayout.Height(26f)))
 		{
 			Import(clothesKind);
 		}

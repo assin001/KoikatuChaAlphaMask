@@ -58,25 +58,30 @@ internal static class UiText
 		"Bottoms (none)", "Bra (none)", "Shorts (none)", "Gloves (none)",
 		"Pantyhose (none)", "Socks (none)", "Indoor shoes (none)", "Outdoor shoes (none)");
 
-	// ---------- 捏人界面控件 ----------
+	// ---------- 捏人界面控件（UGUI / TextMeshPro，U+180E 在这些字体会显示成方框，所以不加前缀） ----------
 
-	internal static readonly string SidebarToggle = IgnoreTranslation + "Alpha Mask Window";
+	internal const string SidebarToggle = "Alpha Mask Window";
 
-	internal static readonly string BodyMask = IgnoreTranslation + "Body mask";
+	internal const string BodyMask = "Body mask";
 
-	internal static readonly string BodyMaskBottoms = IgnoreTranslation + "Body mask  Bottoms";
+	internal const string BodyMaskBottoms = "Body mask  Bottoms";
 
-	internal static readonly string BodyMaskShorts = IgnoreTranslation + "Body mask  Shorts";
+	internal const string BodyMaskShorts = "Body mask  Shorts";
 
-	internal static readonly string AlphaMask = IgnoreTranslation + "Alpha mask";
+	internal const string AlphaMask = "Alpha mask";
 
-	internal static readonly string AlphaMaskBody = IgnoreTranslation + "Alpha mask  Body";
+	internal const string AlphaMaskBody = "Alpha mask  Body";
 
-	internal static readonly string AlphaMaskOuter = IgnoreTranslation + "Alpha mask  Outer";
+	internal const string AlphaMaskOuter = "Alpha mask  Outer";
 
-	internal static readonly string[] SyncKindNames = Prefix(
+	internal static readonly string[] SyncKindNames =
+	{
 		"None", "Top", "Bottoms", "Bra", "Shorts", "Gloves", "Pantyhose", "Socks", "Shoes",
-		"Top (inv)", "Bottoms (inv)", "Bra (inv)", "Shorts (inv)", "Gloves (inv)", "Pantyhose (inv)", "Socks (inv)", "Shoes (inv)");
+		"Top (inv)", "Bottoms (inv)", "Bra (inv)", "Shorts (inv)", "Gloves (inv)", "Pantyhose (inv)", "Socks (inv)", "Shoes (inv)"
+	};
+
+	/// <summary>窗口里操作按钮的宽度，英文文本比中文长，需要更宽。</summary>
+	internal const float ActionButtonWidth = 58f;
 
 	// ---------- 配置说明（配置界面允许被翻译插件译成中文，这里不加前缀） ----------
 
@@ -150,6 +155,9 @@ internal static class UiText
 		"無し", "トップス", "ボトムス", "ブラ", "ショーツ", "手袋", "パンスト", "靴下", "靴",
 		"トップス(反転)", "ボトムス(反転)", "ブラ(反転)", "ショーツ(反転)", "手袋(反転)", "パンスト(反転)", "靴下(反転)", "靴(反転)"
 	};
+
+	/// <summary>窗口里操作按钮的宽度。</summary>
+	internal const float ActionButtonWidth = 44f;
 
 	// ---------- 配置说明 ----------
 
