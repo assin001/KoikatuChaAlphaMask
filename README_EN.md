@@ -26,6 +26,8 @@ This repository is a decompiled and re-adapted source tree that builds both the 
 
 ## Using card-stored masks
 
+![Character Alpha Mask window](docs/images/mask-window.png)
+
 1. In the character maker, tick **`Alpha遮罩窗口`** (Alpha Mask Window) at the bottom of the right-hand Control Panel, or press `F5` (the hotkey is configurable).
 2. Click **Import** on a clothing slot and pick a PNG:
    - `512×512` is recommended (matches the body UV); other sizes work too and a log message will remind you.
@@ -41,6 +43,16 @@ Notes:
 - While the mouse is over the window the plugin temporarily blocks the game's mouse input, so dragging the window does not rotate the character / camera and does not click through to the UI behind it.
 
 Supported slots: bottoms, bra, shorts, gloves, pantyhose, socks, indoor shoes, outdoor shoes (the top slot has no mask, same as the original plugin).
+
+### `ボディマスク` checkbox effect
+
+Same clothing item and same mask, only the `ボディマスク` (body mask) checkbox of the clothing slot is toggled:
+
+| Off (default) | On |
+|---|---|
+| ![body mask off](docs/images/body-mask-off.png) | ![body mask on](docs/images/body-mask-on.png) |
+
+With the checkbox off the mask is not applied and the body parts that should be hidden show through; ticking it hides those parts according to the mask.
 
 ## Configuration
 
