@@ -7,68 +7,78 @@ namespace KK_ChaAlphaMask;
 internal static class UiText
 {
 #if CHA_ALPHA_MASK_EN
+	/// <summary>
+	/// 蒙古文元音分隔符（U+180E，不可见）。XUnity.AutoTranslator 的 IgnoreTextStartingWith 默认就是它，
+	/// 英文界面文本加上这个前缀后不会被翻译插件再翻成中文（否则 EnableIMGUI=True 时窗口里的英文会被译回中文）。
+	/// </summary>
+	private const string IgnoreTranslation = "\u180E";
+
+	private static string[] Prefix(params string[] values)
+	{
+		string[] result = new string[values.Length];
+		for (int i = 0; i < values.Length; i++)
+		{
+			result[i] = IgnoreTranslation + values[i];
+		}
+		return result;
+	}
+
 	// ---------- 捏人界面窗口 ----------
 
-	internal const string WindowTitle = "Character Alpha Mask";
+	internal static readonly string WindowTitle = IgnoreTranslation + "Character Alpha Mask";
 
-	internal const string CloseTooltip = "Close the window (or use the Control Panel toggle / hotkey)";
+	internal static readonly string CloseTooltip = IgnoreTranslation + "Close the window (or use the Control Panel toggle / hotkey)";
 
-	internal const string ShowAll = " Show all";
+	internal static readonly string ShowAll = IgnoreTranslation + " Show all";
 
-	internal const string ShowAllTooltip = "Show slots that are not equipped";
+	internal static readonly string ShowAllTooltip = IgnoreTranslation + "Show slots that are not equipped";
 
-	internal const string Delete = "Delete";
+	internal static readonly string Delete = IgnoreTranslation + "Delete";
 
-	internal const string DeleteTooltip = "Remove the mask from this slot";
+	internal static readonly string DeleteTooltip = IgnoreTranslation + "Remove the mask from this slot";
 
-	internal const string Export = "Export";
+	internal static readonly string Export = IgnoreTranslation + "Export";
 
-	internal const string ExportTooltip = "Save the current mask as a PNG";
+	internal static readonly string ExportTooltip = IgnoreTranslation + "Save the current mask as a PNG";
 
-	internal const string Import = "Import";
+	internal static readonly string Import = IgnoreTranslation + "Import";
 
-	internal const string ImportTooltip = "Import a PNG mask (512x512 recommended)";
+	internal static readonly string ImportTooltip = IgnoreTranslation + "Import a PNG mask (512x512 recommended)";
 
-	internal const string Hint = "Mask: black background, pure red = body parts to hide. 512x512 recommended";
+	internal static readonly string Hint = IgnoreTranslation + "Mask: black background, pure red = body parts to hide. 512x512 recommended";
 
-	internal const string ImportDialogTitle = "Select an alpha mask PNG (512x512 recommended)";
+	internal static readonly string ImportDialogTitle = IgnoreTranslation + "Select an alpha mask PNG (512x512 recommended)";
 
 	internal const string ImportDialogFilter = "PNG image (*.png)|*.png";
 
-	internal static readonly string[] SlotNames =
-	{
-		"Bottoms", "Bra", "Shorts", "Gloves", "Pantyhose", "Socks", "Indoor shoes", "Outdoor shoes"
-	};
+	internal static readonly string[] SlotNames = Prefix(
+		"Bottoms", "Bra", "Shorts", "Gloves", "Pantyhose", "Socks", "Indoor shoes", "Outdoor shoes");
 
-	internal static readonly string[] SlotNamesEmpty =
-	{
+	internal static readonly string[] SlotNamesEmpty = Prefix(
 		"Bottoms (none)", "Bra (none)", "Shorts (none)", "Gloves (none)",
-		"Pantyhose (none)", "Socks (none)", "Indoor shoes (none)", "Outdoor shoes (none)"
-	};
+		"Pantyhose (none)", "Socks (none)", "Indoor shoes (none)", "Outdoor shoes (none)");
 
 	// ---------- 捏人界面控件 ----------
 
-	internal const string SidebarToggle = "Alpha Mask Window";
+	internal static readonly string SidebarToggle = IgnoreTranslation + "Alpha Mask Window";
 
-	internal const string BodyMask = "Body mask";
+	internal static readonly string BodyMask = IgnoreTranslation + "Body mask";
 
-	internal const string BodyMaskBottoms = "Body mask  Bottoms";
+	internal static readonly string BodyMaskBottoms = IgnoreTranslation + "Body mask  Bottoms";
 
-	internal const string BodyMaskShorts = "Body mask  Shorts";
+	internal static readonly string BodyMaskShorts = IgnoreTranslation + "Body mask  Shorts";
 
-	internal const string AlphaMask = "Alpha mask";
+	internal static readonly string AlphaMask = IgnoreTranslation + "Alpha mask";
 
-	internal const string AlphaMaskBody = "Alpha mask  Body";
+	internal static readonly string AlphaMaskBody = IgnoreTranslation + "Alpha mask  Body";
 
-	internal const string AlphaMaskOuter = "Alpha mask  Outer";
+	internal static readonly string AlphaMaskOuter = IgnoreTranslation + "Alpha mask  Outer";
 
-	internal static readonly string[] SyncKindNames =
-	{
+	internal static readonly string[] SyncKindNames = Prefix(
 		"None", "Top", "Bottoms", "Bra", "Shorts", "Gloves", "Pantyhose", "Socks", "Shoes",
-		"Top (inv)", "Bottoms (inv)", "Bra (inv)", "Shorts (inv)", "Gloves (inv)", "Pantyhose (inv)", "Socks (inv)", "Shoes (inv)"
-	};
+		"Top (inv)", "Bottoms (inv)", "Bra (inv)", "Shorts (inv)", "Gloves (inv)", "Pantyhose (inv)", "Socks (inv)", "Shoes (inv)");
 
-	// ---------- 配置说明 ----------
+	// ---------- 配置说明（配置界面允许被翻译插件译成中文，这里不加前缀） ----------
 
 	internal const string CfgToggleWindowKey = "Hotkey that opens / closes the Character Alpha Mask window inside the maker (default F5)";
 

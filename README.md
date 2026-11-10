@@ -125,6 +125,15 @@ dotnet build KKS_ChaAlphaMask\KKS_ChaAlphaMask.csproj -c Release -p:EnUi=true
 
 界面文本集中在 `src/UiText.cs`，中英文两套并列，改文案只需改这一个文件。
 
+### 与 XUnity.AutoTranslator 共存
+
+装了翻译插件（`EnableIMGUI=True`）时，翻译插件会把英文界面再翻成中文，表现为窗口里中英混杂。英文版已处理：
+
+- 所有英文界面文本前带一个不可见字符 `U+180E`，AutoTranslator 默认配置 `IgnoreTextStartingWith=\u180e;` 会直接跳过，不再翻译（前提是没改过这项配置）
+- 若仍被翻译，把本插件加进 IMGUI 黑名单 —— `BepInEx\config\AutoTranslatorConfig.ini` 的 `[Behaviour]` 段：
+  `BlacklistedIMGUIPlugins=KK_ChaAlphaMask;KK_ChaAlphaMask_EN;KKS_ChaAlphaMask;KKS_ChaAlphaMask_EN;`
+- 中文版不需要任何处理（文本本来就是中文）
+
 ## 依赖
 
 - BepInEx 5

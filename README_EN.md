@@ -125,6 +125,15 @@ dotnet build KKS_ChaAlphaMask\KKS_ChaAlphaMask.csproj -c Release -p:EnUi=true
 
 All UI strings live in `src/UiText.cs` with the Chinese and English sets side by side.
 
+### Coexisting with XUnity.AutoTranslator
+
+With a translation plugin installed (`EnableIMGUI=True`) the English UI gets machine-translated back into Chinese, which shows up as a mixed Chinese/English window. The English build handles this:
+
+- Every English UI string is prefixed with an invisible `U+180E` character. AutoTranslator's default `IgnoreTextStartingWith=\u180e;` skips such strings, so they are not translated (as long as that setting is unchanged)
+- If it still gets translated, blacklist the plugin for IMGUI — in `BepInEx\config\AutoTranslatorConfig.ini`, section `[Behaviour]`:
+  `BlacklistedIMGUIPlugins=KK_ChaAlphaMask;KK_ChaAlphaMask_EN;KKS_ChaAlphaMask;KKS_ChaAlphaMask_EN;`
+- The Chinese build needs no handling (its strings are already Chinese)
+
 ## Dependencies
 
 - BepInEx 5
