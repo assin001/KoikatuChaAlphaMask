@@ -10,9 +10,9 @@
 
 > ## ⚠️ 请先读这里
 >
-> - **Koikatu 的整合包（HF Patch、BetterRepack 等）自己就自带这个插件**（HF Patch 里是 `Character Alpha Mask v1.0.0`），原版功能已经能用，**KK 版不太建议塞进整合包**，很容易因为同名覆盖、GUID 重复而冲突 / 不兼容。
-> - **本插件主要是给 KoikatsuSunshine 补全缺失插件**用的：当 KKS 环境里没有这个插件时，用 `KKS_ChaAlphaMask.dll`。
-> - 确实要装在 Koikatu 上时：用 `KK_ChaAlphaMask.dll` **覆盖** `BepInEx\plugins\KK_ChaAlphaMask.dll`，**不要改名并存**，也不要和其它来源的同名插件混装。
+> - **Koikatu 的整合包（HF Patch、BetterRepack 等）自己就自带这个插件**（HF Patch 里是 `Character Alpha Mask v1.0.0`），与本插件文件名、GUID 完全相同。
+> - **本插件主要是给 KoikatsuSunshine 补全缺失插件**用的：当 KKS 环境里没有这个插件时，直接用 `KKS_ChaAlphaMask.dll`。
+> - **Koikatu 版的使用方式是覆盖原始插件**：先把整合包自带的 `BepInEx\plugins\KK_ChaAlphaMask.dll` **备份到 `plugins` 目录之外**，再用 `KK_ChaAlphaMask.dll` 覆盖同名文件；**不要与原始插件共存**（改名并存、把备份留在 `plugins` 里都算共存，会因 GUID 重复导致插件不生效 / 日志报错），也不要和其它来源的同名插件混装。
 > - 详细说明见 [与 HF Patch / 整合包共存](#与-hf-patch--整合包共存)。
 
 ## 功能
@@ -164,15 +164,19 @@ dotnet build KKS_ChaAlphaMask\KKS_ChaAlphaMask.csproj -c Release -p:GameDir="E:\
 
 文件名与本插件发行包**完全相同**，GUID 也都是 `nakay.kk.ChaAlphaMask`。
 
-### 正确做法
+### 正确做法：备份后覆盖
 
-- 想用本插件的新功能时：**用 `KK_ChaAlphaMask.dll` 覆盖** `BepInEx\plugins\KK_ChaAlphaMask.dll`
-- HF Patch / 整合包**重装、修复、更新之后会把 1.0.0 覆盖回来**（窗口消失、新卡片数据读不出来），需要再覆盖一次
-- 只用原版功能的话，不必装这个 KK 版，整合包自带的就够了
+1. **备份原始插件**：把 `BepInEx\plugins\KK_ChaAlphaMask.dll` 复制到 `plugins` **目录之外**（例如 `BepInEx\backup\KK_ChaAlphaMask.dll_1.0.0`）
+2. **覆盖**：用本插件的 `KK_ChaAlphaMask.dll` 覆盖 `BepInEx\plugins\KK_ChaAlphaMask.dll`
+3. **确认只有一份**：`plugins` 里不能再有改名副本、旧版本或其它来源的同名插件
+4. HF Patch / 整合包**重装、修复、更新之后会把 1.0.0 写回来**（窗口消失、新卡片数据读不出来），重复上面 1~2 步即可
+
+> 只用原版功能的话，不必装这个 KK 版，整合包自带的就够了。
 
 ### 错误做法（会出现"不兼容"）
 
 - **改名并存**：把 DLL 改成别的名字（如 `KK_ChaAlphaMask111.dll`）放进 `plugins`。两个插件 GUID 相同 → BepInEx 会跳过其中一个，KKAPI 的 `RegisterExtraBehaviour` 还会因为控制 GUID 重复抛异常，表现为插件不生效 + 日志报错
+- **备份留在 `plugins` 里**：备份必须移出 `plugins`（或以 `.bak` / `.bak_1.0.0` 等非 `.dll` 后缀命名），否则等于与原始插件共存
 - **和别的来源的同名插件混装**（例如同时装了 PlusPack 的同类插件）
 
 ### 卡片数据注意
@@ -182,7 +186,7 @@ dotnet build KKS_ChaAlphaMask\KKS_ChaAlphaMask.csproj -c Release -p:GameDir="E:\
 ### 建议
 
 - **KoikatsuSunshine 用户**：KKS 环境通常没有这个插件，直接用 `KKS_ChaAlphaMask.dll` 即可，不存在上述覆盖问题
-- **Koikatu 用户**：优先用整合包自带的版本；确认要吃新功能（卡片内遮罩窗口）再覆盖，并把覆盖步骤记在整合包更新流程里
+- **Koikatu 用户**：备份原始插件 → 覆盖同名 DLL → 不保留任何其它副本；把这两步记进整合包更新流程，每次更新后重做一次
 
 ## 与 KoikatuSunshine 的差异
 

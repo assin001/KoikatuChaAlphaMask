@@ -10,9 +10,9 @@ This repository is a decompiled and re-adapted source tree that builds both the 
 
 > ## ⚠️ Read this first
 >
-> - **Koikatu repacks (HF Patch, BetterRepack, …) already ship this plugin** (HF Patch bundles `Character Alpha Mask v1.0.0`). The original features already work there, so the **KK build is not recommended for repacks** — the identical file name and plugin GUID easily cause conflicts / incompatibilities.
-> - **This plugin mainly exists to fill the missing plugin on KoikatsuSunshine**: if your KKS install has no ChaAlphaMask, use `KKS_ChaAlphaMask.dll`.
-> - If you really need it on Koikatu: **overwrite** `BepInEx\plugins\KK_ChaAlphaMask.dll` with `KK_ChaAlphaMask.dll`. **Do not rename it and keep both**, and do not mix it with same-named plugins from other sources.
+> - **Koikatu repacks (HF Patch, BetterRepack, …) already ship this plugin** (HF Patch bundles `Character Alpha Mask v1.0.0`), with the exact same file name and plugin GUID as this build.
+> - **This plugin mainly exists to fill the missing plugin on KoikatsuSunshine**: if your KKS install has no ChaAlphaMask, just use `KKS_ChaAlphaMask.dll`.
+> - **On Koikatu the build must overwrite the original plugin**: first **back up** the bundled `BepInEx\plugins\KK_ChaAlphaMask.dll` **outside the `plugins` folder**, then overwrite that same path with `KK_ChaAlphaMask.dll`. **Do not let it coexist with the original plugin** (renaming it, or leaving the backup inside `plugins`, both count as coexistence and cause the plugin to stop working / log errors because of the duplicate GUID), and do not mix it with same-named plugins from other sources.
 > - Details: [Coexisting with HF Patch / repacks](#coexisting-with-hf-patch--repacks).
 
 ## Features
@@ -164,15 +164,19 @@ Masks live in ExtensibleSaveFormat plugin data under the `CustomMasks` key (`Lis
 
 The file name is **identical** to this repository's release, and the plugin GUID is the same (`nakay.kk.ChaAlphaMask`).
 
-### Do
+### Correct procedure: back up, then overwrite
 
-- To use the new features: **overwrite** `BepInEx\plugins\KK_ChaAlphaMask.dll` with `KK_ChaAlphaMask.dll`
-- Reinstalling, repairing or updating HF Patch / the repack **restores 1.0.0** (the window disappears, new card data is not read), so overwrite again afterwards
-- If you only need the original features, you do not need this KK build at all — the bundled one is enough
+1. **Back up the original plugin**: copy `BepInEx\plugins\KK_ChaAlphaMask.dll` **outside the `plugins` folder** (e.g. `BepInEx\backup\KK_ChaAlphaMask.dll_1.0.0`)
+2. **Overwrite**: replace `BepInEx\plugins\KK_ChaAlphaMask.dll` with this build's `KK_ChaAlphaMask.dll`
+3. **Keep only one copy**: no renamed duplicates, no older version and no same-named plugin from another source may remain in `plugins`
+4. Reinstalling, repairing or updating HF Patch / the repack **writes 1.0.0 back** (the window disappears, new card data is not read) — just repeat steps 1–2
+
+> If you only need the original features, you do not need this KK build at all — the bundled one is enough.
 
 ### Don't (this is what causes "incompatibilities")
 
 - **Renaming and keeping both**: putting the DLL under another name (e.g. `KK_ChaAlphaMask111.dll`) into `plugins` gives two plugins with the same GUID → BepInEx skips one of them, and KKAPI's `RegisterExtraBehaviour` throws because the controller GUID is already registered. Result: the plugin does not work and the log fills with errors.
+- **Leaving the backup inside `plugins`**: the backup must be moved out of `plugins` (or named with a non-`.dll` suffix such as `.bak` / `.bak_1.0.0`), otherwise it is coexistence with the original plugin
 - **Mixing with same-named plugins from other sources** (e.g. a Madevil PlusPack equivalent installed at the same time)
 
 ### Card data caveat
@@ -182,7 +186,7 @@ This plugin adds a `CustomMasks` key to the plugin data. **1.0.0 does not know a
 ### Recommendation
 
 - **KoikatsuSunshine users**: KKS installs usually lack this plugin, just use `KKS_ChaAlphaMask.dll` — none of the above applies
-- **Koikatu users**: prefer the version bundled with your repack; only overwrite when you actually want the new features (the card-mask window), and add the overwrite step to your repack update routine
+- **Koikatu users**: back up the original plugin → overwrite the same-named DLL → keep no other copy; add these two steps to your repack update routine and repeat them after every update
 
 ## Differences from the KoikatuSunshine build
 
